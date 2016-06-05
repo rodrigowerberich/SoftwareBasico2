@@ -32,9 +32,9 @@ namespace Montador{
 	Inicializa os atributos da classe Montador.
 	Parâmetros: arquivo de entrada e arquivo de saída.
 	*/
-	Montador::Montador(std::string arquivo_dado,std::string saida_dada){
+	Montador::Montador(std::string arquivo_dado){
 		arquivo = arquivo_dado;
-		saida = saida_dada;
+		saida = arquivo.substr(0,arquivo.size()-3)+"s";
 		section_text = false;
 		section_data = false;
 		modulo = false;
@@ -55,7 +55,7 @@ namespace Montador{
 	*/
 	void Montador::pre_processamento() 
 	{ 
-		Buffer b(arquivo+".asm");
+		Buffer b(arquivo);
 		SeparadorDeLinhas sep;
 		unsigned int num_linha = 1;
 		while(!b.fim()){
@@ -139,18 +139,6 @@ namespace Montador{
 			linhas.erase(linhas_removidas.back());
 			linhas_removidas.pop_back();
 		}
-		if(!section_text){
-			cout << "Erro Semântico: Secao TEXT faltante" << endl;
-			erro = true;
-		}
-		if(modulo_aberto){
-			cout << "Erro Semântico: Diretiva BEGIN sem uma END" << endl;
-			erro = true;
-		}
-		if(!modulo && !existe_stop){
-			cout << "Erro Semântico: Falta pelo menos um STOP, e nao é modulo "<<endl;
-			erro =true;
-		}
 	}
 
 	/* Método da classe Montador
@@ -183,7 +171,7 @@ namespace Montador{
 	*/
 	void Montador::gerar_arquivo(){
 		if(!erro){
-			std::ofstream s_arquivo(string(saida+".o").c_str());
+			std::ofstream s_arquivo(string(saida).c_str());
 			if (s_arquivo.is_open()){
 				if(!modulo){
 					s_arquivo << codigo << endl;

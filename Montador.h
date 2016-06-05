@@ -32,7 +32,7 @@ namespace Montador{
 	{
 	public:
 		//Construtor da classe
-		Montador(std::string, std::string);
+		Montador(std::string);
 
 		// Métodos publicos da classe
 		void pre_processamento();

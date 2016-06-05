@@ -1,15 +1,11 @@
-OBJS = Buffer.o Linha.o Montador.o Tabelas.o Tabelas_montador.o Token.o SeparadorDeLinhas.o montador.o
-OBJSL = Ligador.o ligador.o Buffer.o SeparadorDeLinhas.o Token.o Linha.o Tabelas.o Tabelas_montador.o
+OBJS = Buffer.o Linha.o Montador.o Tabelas.o Tabelas_montador.o Token.o SeparadorDeLinhas.o tradutor.o
 CC = g++
 DEBUG = -g
 CFLAGS =  -c $(DEBUG)
 LFLAGS =  $(DEBUG)
 
-montador : $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o montador
-
-ligador : $(OBJSL)
-	$(CC) $(LFLAGS) $(OBJSL) -o ligador
+tradutor : $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o tradutor
 
 Buffer.o : Buffer.h Buffer.cpp
 	$(CC) $(CFLAGS) Buffer.cpp
@@ -32,14 +28,11 @@ Token.o : Token.h Token.cpp
 SeparadorDeLinhas.o: SeparadorDeLinhas.h SeparadorDeLinhas.cpp Token.h
 	$(CC) $(CFLAGS) SeparadorDeLinhas.cpp
 
-montador.o : montador.c Montador.h
-	$(CC) $(CFLAGS) montador.c
-
-Ligador.o: Ligador.h Ligador.cpp Buffer.h SeparadorDeLinhas.h Token.h Linha.h Tabelas.h
-	$(CC) $(CFLAGS) Ligador.cpp
-
-ligador.o: ligador.c Ligador.h
-	$(CC) $(CFLAGS) ligador.c
+tradutor.o : tradutor.c Montador.h
+	$(CC) $(CFLAGS) tradutor.c
 
 clean:
-	\rm *.o montador
+	\rm *.o
+
+clean_all:
+	\rm *.o tradutor	

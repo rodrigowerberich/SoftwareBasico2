@@ -19,4 +19,4 @@ SECTION DATA
 	B:		space 2
 	H :		SPACE 
 	r:		SPACE
-	DOIS:	CONST	 2
+	DOIS:	CONST	0x2
