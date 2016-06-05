@@ -31,17 +31,9 @@ namespace Montador {
 		Esse método armazena as informacoes na Tabela_Simbolos, e dá erro caso o símbolo ja esteja na
 		Tabela ou se for uma palavra reservada do Assembly inventado.
 	*/
-	void Tabela_Simbolos::inserir_simbolo (string simbolo, int valor,int tam, bool importado, bool cnst, bool val_jmp, bool z) throw (invalid_argument){
+	void Tabela_Simbolos::inserir_simbolo (string simbolo, int valor,int tam, bool importado, bool cnst, bool val_jmp, bool z){
 		unsigned int i;
-		if (tabela_instrucao.teste_instrucao(simbolo)) {
-			throw invalid_argument (string("Erro sintático: O Token ")+simbolo+string(" usado é uma palavra reservada"));
-		}
-		if (tabela_diretiva.teste_diretiva(simbolo))
-			throw invalid_argument (string("Erro sintático: O Token ")+simbolo+string(" usado é uma palavra reservada"));
-		for (i = 0; i < rotulo.size(); i++) {
-			if ((rotulo[i]) == simbolo)
-				throw invalid_argument ("Erro semântico: Definicao duplicada");
-		}
+		
 		rotulo.push_back(simbolo);
 		endereco.push_back(valor);
 		externo.push_back(importado);
@@ -56,16 +48,14 @@ namespace Montador {
 		Retorna: endereco definido do símbolo.
 		Recebe um símbolo e procura o endereco correspondente na tabela de simbolos
 	*/
-	int Tabela_Simbolos::getvalor (string simbolo) throw (invalid_argument){
+	int Tabela_Simbolos::getvalor (string simbolo){
 		unsigned int i;
 		int valor = -2;
 		for (i = 0; i < rotulo.size(); i++) {
 			if ((rotulo[i]) == simbolo)
 				valor = endereco[i];
 		}
-		if (valor == -2)
-			throw invalid_argument ("Erro semântico: Declaracao do rótulo "+simbolo+" ausente");
-
+		
 		return valor;
 	}
 
@@ -155,8 +145,7 @@ namespace Montador {
 		Tabela.
 	*/
 	void Tabela_Definicoes::inserir_definicao (string simbolo, int valor){
-		if(-1!=get_endereco_def(simbolo))
-			throw invalid_argument("Erro léxico: Redefinicao do label "+simbolo);
+		
 		rotulo.push_back(simbolo);
 		endereco.push_back(valor);
 	}

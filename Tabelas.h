@@ -33,8 +33,8 @@ namespace Montador {
 	{
 	public:
 		// métodos públicos da classe Tabela_Simbolos
-		void inserir_simbolo (string rotulo, int endereco, int tamanho, bool externo, bool constante, bool jump_valido, bool zero) throw (invalid_argument); 
-		int getvalor (string rotulo) throw (invalid_argument);
+		void inserir_simbolo (string rotulo, int endereco, int tamanho, bool externo, bool constante, bool jump_valido, bool zero); 
+		int getvalor (string rotulo);
 		int get_tamanho (string rotulo);
 		bool teste_externo (string rotulo);
 		bool teste_constante (string rotulo);

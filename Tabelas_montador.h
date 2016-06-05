@@ -33,13 +33,14 @@ public:
 	bool teste_instrucao (string instrucao);
 	
 	// Getters da classe
-	int get_opcode (string instrucao) throw (invalid_argument);
+	int get_opcode (string instrucao);
 	int get_operandos (string instrucao);
 	int get_tamanho(string instrucao);
 
 private:
 	// Vetores que armazenam a instrucao e suas propriedades
 	vector<string> instrucao;
+	vector<string> instrucao_ia;
 	vector<int> opcode;
 	vector<int> operando;
 	vector<int> tamanho; 

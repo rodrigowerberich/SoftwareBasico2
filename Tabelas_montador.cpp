@@ -27,74 +27,112 @@ opcode, numero de operandos e o tamanho em bytes que será ocupado pela instruca
 Tabela_Instrucoes::Tabela_Instrucoes(){
 
 	instrucao.push_back("ADD");
+	instrucao_ia.push_back("add");
 	opcode.push_back(1);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("SUB");
+	instrucao_ia.push_back("sub");
 	opcode.push_back(2);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("MULT");
+	instrucao_ia.push_back("mult");
 	opcode.push_back(3);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("DIV");
+	instrucao_ia.push_back("div");
 	opcode.push_back(4);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("JMP");
+	instrucao_ia.push_back("jmp");
 	opcode.push_back(5);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("JMPN");
+	instrucao_ia.push_back("");
 	opcode.push_back(6);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("JMPP");
+	instrucao_ia.push_back("");
 	opcode.push_back(7);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("JMPZ");
+	instrucao_ia.push_back("");
 	opcode.push_back(8);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("COPY");
+	instrucao_ia.push_back("");
 	opcode.push_back(9);
 	operando.push_back(2);
 	tamanho.push_back(3);
 
 	instrucao.push_back("LOAD");
+	instrucao_ia.push_back("");
 	opcode.push_back(10);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("STORE");
+	instrucao_ia.push_back("");
 	opcode.push_back(11);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("INPUT");
+	instrucao_ia.push_back("");
 	opcode.push_back(12);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("OUTPUT");
+	instrucao_ia.push_back("");
 	opcode.push_back(13);
 	operando.push_back(1);
 	tamanho.push_back(2);
 
 	instrucao.push_back("STOP");
+	instrucao_ia.push_back("");
 	opcode.push_back(14);
 	operando.push_back(0);
 	tamanho.push_back(1);
+
+	instrucao.push_back("C_INPUT");
+	instrucao_ia.push_back("");
+	opcode.push_back(15);
+	operando.push_back(1);
+	tamanho.push_back(2);
+
+	instrucao.push_back("C_OUTPUT");
+	instrucao_ia.push_back("");
+	opcode.push_back(16);
+	operando.push_back(1);
+	tamanho.push_back(2);
+
+	instrucao.push_back("S_INPUT");
+	instrucao_ia.push_back("");
+	opcode.push_back(17);
+	operando.push_back(1);
+	tamanho.push_back(2);
+
+	instrucao.push_back("S_OUTPUT");
+	instrucao_ia.push_back("");
+	opcode.push_back(18);
+	operando.push_back(1);
+	tamanho.push_back(2);
 
 }
 
@@ -104,7 +142,7 @@ Busca o opcode de uma instrucao,se ele nao existir ele acusa erro sintático
 Recebe: uma string que é nome da instrucao
 Retorna: o numero do opcode
 */
-int Tabela_Instrucoes::get_opcode(string inst) throw (invalid_argument){
+int Tabela_Instrucoes::get_opcode(string inst){
 
 	unsigned int i = 0;
 	int op = -2;
@@ -114,9 +152,6 @@ int Tabela_Instrucoes::get_opcode(string inst) throw (invalid_argument){
 		if ((instrucao[i]) == inst)
 			op = opcode[i];
 	}
-
-	if (op == -2)
-		throw invalid_argument ("Erro Sintático");
 
 	return op;
 }
