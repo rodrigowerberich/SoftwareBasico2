@@ -34,6 +34,7 @@ Faz a verificacao lexica de uma string.
 		// Getters da classe
 		string get_str();
 		const bool is_numerico();
+		const bool is_hexadecimal();
 
 		// Métodos da classe
 		bool verifica_rotulo();
@@ -44,6 +45,8 @@ Faz a verificacao lexica de uma string.
 		string my_token;
 		// Um booleano que diz se o token é numerico ou nao
 		bool numerico;
+		// Um booleano que diz se o token é hexadecimal ou nao
+		bool hexadecimal;
 	};
 
 } // namespace Montador
