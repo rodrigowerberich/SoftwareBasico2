@@ -31,7 +31,7 @@ namespace Montador {
 		Esse método armazena as informacoes na Tabela_Simbolos, e dá erro caso o símbolo ja esteja na
 		Tabela ou se for uma palavra reservada do Assembly inventado.
 	*/
-	void Tabela_Simbolos::inserir_simbolo (string simbolo, int valor,int tam, bool importado, bool cnst, bool val_jmp, bool z){
+	void Tabela_Simbolos::inserir_simbolo (string simbolo, int valor,int tam, bool importado, bool cnst, bool val_jmp, bool z, int line){
 		unsigned int i;
 		
 		rotulo.push_back(simbolo);
@@ -41,6 +41,7 @@ namespace Montador {
 		jump_valido.push_back(val_jmp);
 		tamanho.push_back(tam);
 		zero.push_back(z);
+		linha.push_back(line);
 	}
 
 	/*	Método da classe Tabela_Simbolos
@@ -73,6 +74,18 @@ namespace Montador {
 		
 		return 0;
 	}
+
+	int Tabela_Simbolos::get_linha (string simbolo) {
+		unsigned int i;
+
+		for (i=0; i< rotulo.size(); i++){
+			if (rotulo[i] == simbolo)
+				return linha[i];
+		}
+		
+		return 0;
+	}
+
 
 	/*	Método da classe Tabela_Simbolos
 		Argumentos recebidos: símbolo.

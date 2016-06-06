@@ -33,9 +33,10 @@ namespace Montador {
 	{
 	public:
 		// métodos públicos da classe Tabela_Simbolos
-		void inserir_simbolo (string rotulo, int endereco, int tamanho, bool externo, bool constante, bool jump_valido, bool zero); 
+		void inserir_simbolo (string rotulo, int endereco, int tamanho, bool externo, bool constante, bool jump_valido, bool zero, int linha); 
 		int getvalor (string rotulo);
 		int get_tamanho (string rotulo);
+		int get_linha (string rotulo);
 		bool teste_externo (string rotulo);
 		bool teste_constante (string rotulo);
 		bool teste_jump_valido (string rotulo);
@@ -45,6 +46,7 @@ namespace Montador {
 		vector<string> rotulo;
 		vector<int> endereco;
 		vector<int> tamanho;
+		vector<int> linha;
 		vector<bool> externo;
 		vector<bool> constante;
 		vector<bool> jump_valido;
