@@ -37,6 +37,7 @@ namespace Montador {
 		int getvalor (string rotulo);
 		int get_tamanho (string rotulo);
 		int get_linha (string rotulo);
+		string get_rotulo (int linha);
 		bool teste_externo (string rotulo);
 		bool teste_constante (string rotulo);
 		bool teste_jump_valido (string rotulo);

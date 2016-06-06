@@ -86,6 +86,17 @@ namespace Montador {
 		return 0;
 	}
 
+	string Tabela_Simbolos::get_rotulo (int line) {
+		unsigned int i;
+
+		for (i=0; i< rotulo.size(); i++){
+			if (linha[i] == line)
+				return rotulo[i];
+		}
+		
+		return 0;
+	}
+
 
 	/*	Método da classe Tabela_Simbolos
 		Argumentos recebidos: símbolo.
