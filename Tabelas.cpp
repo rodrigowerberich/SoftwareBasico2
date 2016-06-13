@@ -88,13 +88,13 @@ namespace Montador {
 
 	string Tabela_Simbolos::get_rotulo (int line) {
 		unsigned int i;
-
+		string nada;
 		for (i=0; i< rotulo.size(); i++){
 			if (linha[i] == line)
 				return rotulo[i];
 		}
 		
-		return 0;
+		return nada;
 	}
 
 

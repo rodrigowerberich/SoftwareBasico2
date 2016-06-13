@@ -37,8 +37,6 @@ namespace Montador{
 		saida = arquivo.substr(0,arquivo.size()-3)+"s";
 		section_text = false;
 		section_data = false;
-		modulo = false;
-		modulo_aberto = false;
 		ignorar_linha = false;
 		existe_stop = false;
 		linha_processada = false;
@@ -114,9 +112,9 @@ namespace Montador{
 					}
 					if(!rotulo_sozinho){
 						if(identificar_diretiva(tokens_linha))
-							executar_diretiva(tokens_linha,rotulo,endereco);
+							executar_diretiva(tokens_linha,rotulo,endereco,linha->get_numero());
 						else if(identificar_instrucao(tokens_linha))
-							executar_instrucao(tokens_linha,rotulo,endereco);
+							executar_instrucao(tokens_linha,rotulo,endereco,linha->get_numero());
 						else{
 							linhas_removidas.push_back(linha);
 						}
@@ -130,7 +128,6 @@ namespace Montador{
 					gerar_erro(ia,linha->get_numero());
 				}
 			}else{
-			
 				linhas_removidas.push_back(linha);
 				ignorar_linha = false;
 			}
@@ -153,9 +150,9 @@ namespace Montador{
 			corretor_posicao = -1;
 			try {
 				if(identificar_diretiva(tokens_linha)){
-					codificar_diretiva(tokens_linha);
+					codificar_diretiva(tokens_linha,linha->get_numero());
 				}else if(identificar_instrucao(tokens_linha)){
-					codificar_instrucao(tokens_linha);
+					codificar_instrucao(tokens_linha,linha->get_numero());
 				}
 			}catch(const std::invalid_argument& ia){
 				gerar_erro(ia,linha->get_numero());
@@ -173,18 +170,7 @@ namespace Montador{
 		if(!erro){
 			std::ofstream s_arquivo(string(saida).c_str());
 			if (s_arquivo.is_open()){
-				if(!modulo){
-					s_arquivo << codigo << endl;
-				}else{
-					s_arquivo << "TABLE USE" << endl;
-					s_arquivo << gerar_tabela_uso();
-					s_arquivo << "TABLE DEFINITION" <<endl;
-					s_arquivo << gerar_tabela_definicao();
-					s_arquivo << "RELATIVE" <<endl;
-					s_arquivo << relativo <<endl<<endl;
-					s_arquivo << "CODE" <<endl;
-					s_arquivo << codigo << endl;
-				}
+				s_arquivo << codigo << endl;
 			}
 			s_arquivo.close();
 		}
@@ -318,50 +304,25 @@ namespace Montador{
 	por labels.
 	Nesse método coloca-se as labels que indicam uma diretiva na tabela de símbolos.
 	*/
-	void Montador::executar_diretiva(std::vector<Token> & tokens,string rotulo, int & endereco){
+	void Montador::executar_diretiva(std::vector<Token> & tokens,string rotulo, int & endereco, int num_linha){
 		string diretiva = tokens[1+corretor_posicao].get_str();
 		if (diretiva == "SECTION"){
-			linha_processada = true;
+			//linha_processada = true;
 			if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true,false);
+				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true,false,num_linha);
 			}
 			diretiva_section(tokens[2+corretor_posicao].get_str());
-		}else if (diretiva == "SPACE"){
-			
 		}else if(diretiva == "CONST"){
 			if(!rotulo.empty()){
 				if(tokens.size()>2){
 					int argumento = atoi(tokens[2+corretor_posicao].get_str().c_str());
 					if(argumento == 0){
-						tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,false,true);
+						tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,false,true,num_linha);
 					}else{
-						tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,false,false);
+						tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,false,false,num_linha);
 					}
 				}				
 			}
-		}else if(diretiva == "BEGIN"){
-			linha_processada = true;
-			if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true, false);
-			}
-			modulo = true;
-			modulo_aberto = true;
-		}else if(diretiva == "END"){
-			linha_processada = true;
-			if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,false, false);
-			}
-			modulo_aberto = false;
-		}
-		else if(diretiva == "PUBLIC"){
-			if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true, false);
-			}
-		}else if(diretiva == "EXTERN"){
-			linha_processada = true;
-			if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,0,0,true,false,true,false);
-			}	
 		}else if(diretiva == "EQU"){
 			linha_processada = true;
 		}else if(diretiva == "IF"){
@@ -375,14 +336,14 @@ namespace Montador{
 		if(diretiva == "SPACE"){
 			if(0==tokens.size()-(2+corretor_posicao)){
 				if(!rotulo.empty()){
-			 		tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,false,false,false);
+			 		tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,false,false,false,num_linha);
 			    }
 			    endereco+=1;
 			}else if(1==tokens.size()-(2+corretor_posicao)){
 				string s_num = tokens[2+corretor_posicao].get_str();
 				int num = atoi(s_num.c_str());
 				if(!rotulo.empty()){
-			 		tabela_simbolo.inserir_simbolo(rotulo,endereco,num,false,false,false,false);
+			 		tabela_simbolo.inserir_simbolo(rotulo,endereco,num,false,false,false,false,num_linha);
 			    }
 			    endereco += num;
 			}
@@ -411,10 +372,10 @@ namespace Montador{
 	estao com o número correto de argumentos e se estao na secao correta.
 	Nesse método coloca-se as labels que precedem uma instrucao na tabela de símbolos.
 	*/
-	void Montador::executar_instrucao(std::vector<Token> & tokens,string rotulo, int & endereco){
+	void Montador::executar_instrucao(std::vector<Token> & tokens,string rotulo, int & endereco, int num_linha){
 		string instrucao = tokens[1+corretor_posicao].get_str();
 		if(!rotulo.empty()){
-				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true,false);
+				tabela_simbolo.inserir_simbolo(rotulo,endereco,0,false,true,true,false,num_linha);
 		}
 
 		if(instrucao == "STOP")
@@ -462,31 +423,36 @@ namespace Montador{
 	Codifica a diretiva CONST, verificando se o argumento dela é um numero ou nao é válido e escreve
 	o código na string "codigo".
 	*/
-	void Montador::codificar_diretiva(std::vector<Token> tokens){
+	void Montador::codificar_diretiva(std::vector<Token> tokens, int num_linha){
 		
 		string argumento, diretiva = tokens[0].get_str(); 
 		int endereco;
 
-		if(diretiva == "PUBLIC") {
-		
-			argumento = tokens[1].get_str();
-			endereco = tabela_simbolo.getvalor(argumento);	
-			tabela_definicao.inserir_definicao(argumento,endereco);
-			
-		}
-		else if(diretiva == "SPACE") {
+		if(diretiva == "SECTION"){
 			if (tokens.size()>1) {
 				argumento = tokens[1].get_str();
-				for (int i = 0;i<atoi(argumento.c_str());i++){
-					codigo += "00 ";
+				if (argumento == "DATA"){
+					codigo += "section .data\n";
+				}else if(argumento == "TEXT"){
+					codigo += "section .text\nglobal _start\n_start:\n";
 				}
+			} 
+		}
+
+		if(diretiva == "SPACE") {
+			if (tokens.size()>1) {
+				argumento = tokens[1].get_str();
+				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd ";
+				for (int i = 0;i<atoi(argumento.c_str())-1;i++){
+					codigo += "0,";
+				}
+				codigo+="0\n";
 			}else 
-				codigo += "00 ";
+				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd 0\n";
 		}
 		else if(diretiva == "CONST") {
-
 			argumento = tokens[1].get_str();
-			codigo += argumento + " ";
+				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd "+argumento+"\n";
 		}
 	}
 
@@ -498,7 +464,7 @@ namespace Montador{
 	argumentos dados sao válidos sintaticamente e semanticamente.
 	Escreve o código gerado de cada instrucao na string "codigo".
 	*/
-	void Montador::codificar_instrucao(std::vector<Token> tokens){
+	void Montador::codificar_instrucao(std::vector<Token> tokens, int num_linha){
 
 		string argumento, soma, instrucao = tokens[0].get_str(); 
 		int endereco, opcode, operandos;
@@ -530,14 +496,7 @@ namespace Montador{
 		}
 		// Para a instrucao STOP, pega o opcode na tabela de instrucao e escreve o codigo.
 		else if (instrucao == "STOP"){
-
-			opcode = tabela_instrucao.get_opcode(instrucao);
-			stringstream ss;
-			ss << opcode;
-			ss << " ";
-			string s_opcode = ss.str();
-
-			codigo += s_opcode;
+			codigo += "mov eax,1\nmov ebx,0\nint 80h\n";
 		}
 		/* Para o COPY, verifica-se se os argumentos sao válidos, nao sao labels que apontam para instrucoes
 		   e estao definidos na tabela_simbolos, verifica-se tambem se o endereco a receber a cópia 

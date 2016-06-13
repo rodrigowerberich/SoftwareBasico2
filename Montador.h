@@ -60,10 +60,6 @@ namespace Montador{
 		Tabela_Instrucoes tabela_instrucao;
 		// Objeto da classe Tabela_Diretivas que armazena a tabela de diretivas
 		Tabela_Diretivas tabela_diretiva;
-		// bool que vai indicar se o programa dado é um módulo
-		bool modulo;
-		// bool que vai indicar se, caso seja um módulo, já chegou na diretiva "END"
-		bool modulo_aberto;
 		// bool que vai indicar se a secao TEXT já foi declarada
 		bool section_text;
 		// bool que vai indicar se a secao DATA já foi declarada
@@ -93,12 +89,12 @@ namespace Montador{
 		void tratar_EQU(Linha&);
 		std::string identificar_rotulo(std::vector<Token> &);
 		bool identificar_diretiva(std::vector<Token> &);
-		void executar_diretiva(std::vector<Token> &,std::string,int &);
+		void executar_diretiva(std::vector<Token> &,std::string,int &,int);
 		void diretiva_section(std::string);
-		void codificar_diretiva(std::vector<Token> tokens_linha);
+		void codificar_diretiva(std::vector<Token> tokens_linha,int);
 		bool identificar_instrucao(std::vector<Token> &);
-		void executar_instrucao(std::vector<Token> &,std::string,int &);
-		void codificar_instrucao(std::vector<Token> tokens_linha);
+		void executar_instrucao(std::vector<Token> &,std::string,int &,int);
+		void codificar_instrucao(std::vector<Token> tokens_linha,int);
 		void gerar_erro(const std::invalid_argument&,int);
 		std::string gerar_tabela_uso();
 		std::string gerar_tabela_definicao();
