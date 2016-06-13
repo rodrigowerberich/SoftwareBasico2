@@ -466,173 +466,195 @@ namespace Montador{
 	*/
 	void Montador::codificar_instrucao(std::vector<Token> tokens, int num_linha){
 
-		string argumento, soma, instrucao = tokens[0].get_str(); 
-		int endereco, opcode, operandos;
-
-		// Se a instrucao for um tipo de JUMP, verifica se o endereco de pulo é válido
-
-		if (instrucao == "JMP" || instrucao == "JMPN" || instrucao == "JMPP" || instrucao == "JMPZ"){
-			argumento = tokens[1].get_str();
-
-			if(tabela_simbolo.teste_externo(argumento))
-				tabela_de_uso.inserir_uso(argumento,endereco_uso+1);
-			
-			stringstream ss1;
-			ss1 << endereco_uso+1;
-			ss1 << " ";
-			string s_end = ss1.str();
-
-			relativo +=s_end;
-
-			endereco = tabela_simbolo.getvalor(argumento);	
-			opcode = tabela_instrucao.get_opcode(instrucao);
-			stringstream ss;
-			ss << opcode;
-			ss << " ";
-			ss << endereco;
-			string s_opcode = ss.str();
-
-			codigo += s_opcode + " ";
+		string argumento, argumento2, instrucao = tokens[0].get_str(); 
+		
+		if (!tabela_simbolo.get_rotulo(num_linha).empty()){
+			codigo += tabela_simbolo.get_rotulo(num_linha)+": ";
 		}
-		// Para a instrucao STOP, pega o opcode na tabela de instrucao e escreve o codigo.
+		if (instrucao == "ADD"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "add eax, ["+argumento+"+"+argumento2+"*4]\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "add eax, ["+argumento+"]\n";
+			}
+		}
+		else if (instrucao == "SUB"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "sub eax, ["+argumento+"+"+argumento2+"*4]\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "sub eax, ["+argumento+"]\n";
+			}
+		}
+		else if (instrucao == "MULT"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "mul DWORD ["+argumento+"+"+argumento2+"*4]\n";
+			}else {			
+				argumento = tokens[1].get_str();
+				codigo += "mul DWORD ["+argumento+"]\n";
+			}
+		}
+		else if (instrucao == "DIV"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "div DWORD ["+argumento+"+"+argumento2+"*4]\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "div DWORD ["+argumento+"]\n";
+			}
+		}
+		else if (instrucao == "JMP"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "jmp "+argumento+"+"+argumento2+"*4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "jmp "+argumento+"\n";
+			}
+		}
+		else if (instrucao == "JMPN"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "cmp eax, 0\n";
+				codigo += "jb "+argumento+"+"+argumento2+"*4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "cmp eax, 0\n";
+				codigo += "jb "+argumento+"\n";
+			}
+		}
+		else if (instrucao == "JMPP"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "cmp eax, 0\n";
+				codigo += "ja "+argumento+"+"+argumento2+"*4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "cmp eax, 0\n";
+				codigo += "ja "+argumento+"\n";
+			}
+		}
+		else if (instrucao == "JMPZ"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "cmp eax, 0\n";
+				codigo += "je "+argumento+"+"+argumento2+"*4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "cmp eax, 0\n";
+				codigo += "je "+argumento+"\n";
+			}
+		}
+		else if (instrucao == "COPY"){
+			if (tokens.size()>3){
+
+				if(tokens[2].get_str() == "+" && tokens.size()<6) {
+
+					argumento = tokens[1].get_str()+"+"+tokens[3].get_str();
+					argumento = argumento.substr(0,argumento.size()-1);
+					argumento2= tokens[4].get_str();
+
+					codigo += "mov ebx, ["+argumento+"]\n";
+					codigo += "mov ["+argumento2+"], ebx\n";
+				}else if (tokens[2].get_str() != "+" && tokens[3].get_str() == "+"){
+
+					argumento = tokens[1].get_str();
+					argumento = argumento.substr(0,argumento.size()-1);
+					argumento2= tokens[2].get_str()+"+"+tokens[4].get_str();
+
+					codigo += "mov ebx, ["+argumento+"]\n";
+					codigo += "mov ["+argumento2+"], ebx\n";
+
+				}else if (tokens.size()> 6) {
+					if (tokens[2].get_str() == "+" && tokens[5].get_str() == "+"){
+
+						argumento = tokens[1].get_str()+"+"+tokens[3].get_str();
+						argumento = argumento.substr(0,argumento.size()-1);
+						argumento2= tokens[4].get_str()+"+"+tokens[6].get_str();
+
+						codigo += "mov ebx, ["+argumento+"]\n";
+						codigo += "mov ["+argumento2+"], ebx\n";
+					}
+				}
+				
+
+			}else {
+				argumento = tokens[1].get_str();
+				argumento = argumento.substr(0,argumento.size()-1);
+				argumento2 = tokens[2].get_str();
+				codigo += "mov ebx, ["+argumento+"]\n";
+				codigo += "mov ["+argumento2+"], ebx\n";
+			}
+		}
+		else if (instrucao == "LOAD"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "mov eax, ["+argumento+"+"+argumento2+"*4]\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "mov eax, ["+argumento+"]\n";
+			}
+		}
+		else if (instrucao == "STORE"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "mov ["+argumento+"+"+argumento2+"*4], eax\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "mov ["+argumento+"], eax\n";
+			}
+		}
+		// else if (instrucao == "INPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
+		// else if (instrucao == "OUTPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
+		// else if (instrucao == "C_INPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
+		// else if (instrucao == "C_OUTPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
+		// else if (instrucao == "S_INPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
+		// else if (instrucao == "S_OUTPUT"){
+		// 	argumento = tokens[1].get_str();
+		// 	codigo += "mov ["+argumento+"], eax\n";
+		// }
 		else if (instrucao == "STOP"){
 			codigo += "mov eax,1\nmov ebx,0\nint 80h\n";
 		}
-		/* Para o COPY, verifica-se se os argumentos sao válidos, nao sao labels que apontam para instrucoes
-		   e estao definidos na tabela_simbolos, verifica-se tambem se o endereco a receber a cópia 
-		   nao é uma constante, após isso, escreve o código.
-		*/
-		else if (instrucao == "COPY") {
-			string argumento2,soma2;
-			int endereco2;
-			operandos = tabela_instrucao.get_operandos(instrucao);
-			if(operandos == (tokens.size() - 1)){
-
-				argumento = tokens[1].get_str();
-				argumento2 = tokens[2].get_str();
-
-				argumento = argumento.substr(0,argumento.size()-1);
-
-			}else if(operandos+2 == (tokens.size() - 1)){
-				if(tokens[2].get_str() == "+" && tokens[3].get_str() != "+"){
-					argumento = tokens[1].get_str();
-					argumento2 = tokens[4].get_str();
-					soma = tokens[3].get_str();
-
-				}else if(tokens[2].get_str() != "+" && tokens[3].get_str() == "+"){
-					argumento = tokens[1].get_str();
-					argumento2 = tokens[2].get_str();
-					soma2 = tokens[4].get_str();
-					argumento = argumento.substr(0,argumento.size()-1);
-
-				}
-
-			}
-			else if(operandos+4 == (tokens.size() - 1)){
-				
-				argumento = tokens[1].get_str();
-				soma = tokens[3].get_str();
-				argumento2 = tokens[4].get_str();
-				soma2 = tokens[6].get_str();
-
-			}
-			endereco = tabela_simbolo.getvalor(argumento);
-			endereco2 = tabela_simbolo.getvalor(argumento2);
-			opcode = tabela_instrucao.get_opcode(instrucao);
-
-
-			if(!soma.empty()){
-				int n_soma = atoi(soma.c_str());
-				endereco += n_soma;			
-			}
-
-			if(!soma2.empty()){
-				int n_soma = atoi(soma2.c_str());
-				endereco2 += n_soma;				
-			}
-
-			stringstream ss;
-			ss << opcode;
-			ss << " ";
-			ss << endereco;
-			ss << " ";
-			ss << endereco2;
-			string s_opcode = ss.str();
 		
-			codigo += s_opcode + " ";
-
-			if(tabela_simbolo.teste_externo(argumento))
-				tabela_de_uso.inserir_uso(argumento,endereco_uso+1);
-
-			if(tabela_simbolo.teste_externo(argumento2))
-				tabela_de_uso.inserir_uso(argumento,endereco_uso+2);
-
-			stringstream ss1;
-			ss1 << endereco_uso+1;
-			ss1 << " ";
-			ss1 << endereco_uso+2;
-			ss1 << " ";
-			string s_end = ss1.str();
-
-			relativo +=s_end;
-
-		}
-		/* Para demais instrucoes, verifica-se se o argumento está definido na tabela de símbolos
-		 se ele é uma constante ou uma label que aponta para uma instrucao.
-		 Escreve-se o código na string "codigo".
-		 */ 
-		else {
-			operandos = tabela_instrucao.get_operandos(instrucao);
-
-			if (operandos == (tokens.size() - 1)){
-
-				argumento = tokens[1].get_str();
-
-				endereco = tabela_simbolo.getvalor(argumento);
-				opcode = tabela_instrucao.get_opcode(instrucao);
-
-				stringstream ss;
-				ss << opcode;
-				ss << " ";
-				ss << endereco;
-				string s_opcode = ss.str();
-			
-				codigo += s_opcode + " ";
-
-			} else {
-				argumento = tokens[1].get_str();
-				endereco = tabela_simbolo.getvalor(argumento);
-				
-				if (tokens[2].get_str() == "+") {
-
-
-					soma = tokens[3].get_str();
-					int n_soma = atoi(soma.c_str());
-
-					opcode = tabela_instrucao.get_opcode(instrucao); 
-					endereco = endereco + n_soma;
-
-					stringstream ss;
-					ss << opcode;
-					ss << " ";
-					ss << endereco;
-					string s_opcode = ss.str();
-						
-					codigo += s_opcode + " ";
-
-				}
-			}
-
-			if(tabela_simbolo.teste_externo(argumento))
-				tabela_de_uso.inserir_uso(argumento,endereco_uso+1);
-						stringstream ss1;
-
-			ss1 << endereco_uso+1;
-			ss1 << " ";
-			string s_end = ss1.str();
-
-			relativo +=s_end;
-		}
-		endereco_uso+=tabela_instrucao.get_tamanho(instrucao);
 	}
 }
