@@ -1,0 +1,2 @@
+nasm -f elf -o LerChar.o LerChar.asm
+ld -m elf_i386 -o LerChar LerChar.o
