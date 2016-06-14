@@ -28,7 +28,7 @@ Token.o : Token.h Token.cpp
 SeparadorDeLinhas.o: SeparadorDeLinhas.h SeparadorDeLinhas.cpp Token.h
 	$(CC) $(CFLAGS) SeparadorDeLinhas.cpp
 
-tradutor.o : tradutor.c Montador.h
+tradutor.o : tradutor.c Montador.h Funcoes.h
 	$(CC) $(CFLAGS) tradutor.c
 
 clean:

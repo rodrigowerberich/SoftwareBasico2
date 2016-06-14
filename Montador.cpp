@@ -23,6 +23,7 @@ etapas de pre-processamento, primeira passagem, segunda passagem e geracao do ar
 #include "Tabelas.h"
 #include "Buffer.h"
 #include "SeparadorDeLinhas.h"
+#include "Funcoes.h"
 
 using namespace std;
 
@@ -171,6 +172,7 @@ namespace Montador{
 			std::ofstream s_arquivo(string(saida).c_str());
 			if (s_arquivo.is_open()){
 				s_arquivo << codigo << endl;
+				s_arquivo << funcoes << endl;
 			}
 			s_arquivo.close();
 		}
@@ -469,8 +471,9 @@ namespace Montador{
 		string argumento, argumento2, instrucao = tokens[0].get_str(); 
 		
 		if (!tabela_simbolo.get_rotulo(num_linha).empty()){
-			codigo += tabela_simbolo.get_rotulo(num_linha)+": ";
+			codigo += tabela_simbolo.get_rotulo(num_linha)+": \n";
 		}
+		codigo += "\t";
 		if (instrucao == "ADD"){
 			if (tokens.size()>2){
 				argumento = tokens[1].get_str();
@@ -498,10 +501,12 @@ namespace Montador{
 				argumento = tokens[1].get_str();
 				argumento2= tokens[3].get_str();
 
-				codigo += "mul DWORD ["+argumento+"+"+argumento2+"*4]\n";
+				codigo += "mov edx,0\n";
+				codigo += "\tmul DWORD ["+argumento+"+"+argumento2+"*4]\n";
 			}else {			
 				argumento = tokens[1].get_str();
-				codigo += "mul DWORD ["+argumento+"]\n";
+				codigo += "mov edx,0\n";
+				codigo += "\tmul DWORD ["+argumento+"]\n";
 			}
 		}
 		else if (instrucao == "DIV"){
@@ -509,10 +514,12 @@ namespace Montador{
 				argumento = tokens[1].get_str();
 				argumento2= tokens[3].get_str();
 
-				codigo += "div DWORD ["+argumento+"+"+argumento2+"*4]\n";
+				codigo += "mov edx,0\n";
+				codigo += "\tdiv DWORD ["+argumento+"+"+argumento2+"*4]\n";
 			}else {
 				argumento = tokens[1].get_str();
-				codigo += "div DWORD ["+argumento+"]\n";
+				codigo += "mov edx,0\n";
+				codigo += "\tdiv DWORD ["+argumento+"]\n";
 			}
 		}
 		else if (instrucao == "JMP"){
@@ -532,11 +539,11 @@ namespace Montador{
 				argumento2= tokens[3].get_str();
 
 				codigo += "cmp eax, 0\n";
-				codigo += "jb "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tjb "+argumento+"+"+argumento2+"*4\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "cmp eax, 0\n";
-				codigo += "jb "+argumento+"\n";
+				codigo += "\tjb "+argumento+"\n";
 			}
 		}
 		else if (instrucao == "JMPP"){
@@ -545,11 +552,11 @@ namespace Montador{
 				argumento2= tokens[3].get_str();
 
 				codigo += "cmp eax, 0\n";
-				codigo += "ja "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tja "+argumento+"+"+argumento2+"*4\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "cmp eax, 0\n";
-				codigo += "ja "+argumento+"\n";
+				codigo += "\tja "+argumento+"\n";
 			}
 		}
 		else if (instrucao == "JMPZ"){
@@ -558,11 +565,11 @@ namespace Montador{
 				argumento2= tokens[3].get_str();
 
 				codigo += "cmp eax, 0\n";
-				codigo += "je "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tje "+argumento+"+"+argumento2+"*4\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "cmp eax, 0\n";
-				codigo += "je "+argumento+"\n";
+				codigo += "\tje "+argumento+"\n";
 			}
 		}
 		else if (instrucao == "COPY"){
@@ -575,7 +582,7 @@ namespace Montador{
 					argumento2= tokens[4].get_str();
 
 					codigo += "mov ebx, ["+argumento+"]\n";
-					codigo += "mov ["+argumento2+"], ebx\n";
+					codigo += "\tmov ["+argumento2+"], ebx\n";
 				}else if (tokens[2].get_str() != "+" && tokens[3].get_str() == "+"){
 
 					argumento = tokens[1].get_str();
@@ -583,7 +590,7 @@ namespace Montador{
 					argumento2= tokens[2].get_str()+"+"+tokens[4].get_str();
 
 					codigo += "mov ebx, ["+argumento+"]\n";
-					codigo += "mov ["+argumento2+"], ebx\n";
+					codigo += "\tmov ["+argumento2+"], ebx\n";
 
 				}else if (tokens.size()> 6) {
 					if (tokens[2].get_str() == "+" && tokens[5].get_str() == "+"){
@@ -593,7 +600,7 @@ namespace Montador{
 						argumento2= tokens[4].get_str()+"+"+tokens[6].get_str();
 
 						codigo += "mov ebx, ["+argumento+"]\n";
-						codigo += "mov ["+argumento2+"], ebx\n";
+						codigo += "\tmov ["+argumento2+"], ebx\n";
 					}
 				}
 				
@@ -603,7 +610,7 @@ namespace Montador{
 				argumento = argumento.substr(0,argumento.size()-1);
 				argumento2 = tokens[2].get_str();
 				codigo += "mov ebx, ["+argumento+"]\n";
-				codigo += "mov ["+argumento2+"], ebx\n";
+				codigo += "\tmov ["+argumento2+"], ebx\n";
 			}
 		}
 		else if (instrucao == "LOAD"){
@@ -628,14 +635,22 @@ namespace Montador{
 				codigo += "mov ["+argumento+"], eax\n";
 			}
 		}
-		// else if (instrucao == "INPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
-		// else if (instrucao == "OUTPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
+		else if (instrucao == "INPUT"){
+
+			// falta fazer para N+2 
+			argumento = tokens[1].get_str();
+			codigo += "push "+argumento+"\n";
+			codigo += "\tcall LerInteiro\n";
+			codigo += "\t add esp,4\n";
+		}
+		else if (instrucao == "OUTPUT"){
+
+			// falta fazer para N+2
+			argumento = tokens[1].get_str();
+			codigo += "push DWORD ["+argumento+"]\n";
+			codigo += "\tcall EscreverInteiro\n";
+			codigo += "\t add esp,4\n";
+		}
 		// else if (instrucao == "C_INPUT"){
 		// 	argumento = tokens[1].get_str();
 		// 	codigo += "mov ["+argumento+"], eax\n";
@@ -653,7 +668,7 @@ namespace Montador{
 		// 	codigo += "mov ["+argumento+"], eax\n";
 		// }
 		else if (instrucao == "STOP"){
-			codigo += "mov eax,1\nmov ebx,0\nint 80h\n";
+			codigo += "mov eax,1\n\tmov ebx,0\n\tint 80h\n";
 		}
 		
 	}
