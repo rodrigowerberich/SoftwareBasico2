@@ -637,36 +637,97 @@ namespace Montador{
 		}
 		else if (instrucao == "INPUT"){
 
-			// falta fazer para N+2 
-			argumento = tokens[1].get_str();
-			codigo += "push "+argumento+"\n";
-			codigo += "\tcall LerInteiro\n";
-			codigo += "\t add esp,4\n";
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tcall LerInteiro\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push "+argumento+"\n";
+				codigo += "\tcall LerInteiro\n";
+				codigo += "\tadd esp,4\n";
+			}
 		}
 		else if (instrucao == "OUTPUT"){
 
-			// falta fazer para N+2
-			argumento = tokens[1].get_str();
-			codigo += "push DWORD ["+argumento+"]\n";
-			codigo += "\tcall EscreverInteiro\n";
-			codigo += "\t add esp,4\n";
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push DWORD ["+argumento+"+"+argumento2+"*4]\n";
+				codigo += "\tcall EscreverInteiro\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push DWORD ["+argumento+"]\n";
+				codigo += "\tcall EscreverInteiro\n";
+				codigo += "\tadd esp,4\n";
+			}
 		}
-		// else if (instrucao == "C_INPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
-		// else if (instrucao == "C_OUTPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
-		// else if (instrucao == "S_INPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
-		// else if (instrucao == "S_OUTPUT"){
-		// 	argumento = tokens[1].get_str();
-		// 	codigo += "mov ["+argumento+"], eax\n";
-		// }
+		else if (instrucao == "C_INPUT"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tcall LerChar\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push "+argumento+"\n";
+				codigo += "\tcall LerChar\n";
+				codigo += "\tadd esp,4\n";
+			}
+		}
+		else if (instrucao == "C_OUTPUT"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push DWORD "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tcall EscreverChar\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push DWORD "+argumento+"\n";
+				codigo += "\tcall EscreverChar\n";
+				codigo += "\tadd esp,4\n";
+			}
+		}
+		else if (instrucao == "S_INPUT"){
+
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tcall LerString\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push "+argumento+"\n";
+				codigo += "\tcall LerString\n";
+				codigo += "\tadd esp,4\n";
+			}
+		}
+		else if (instrucao == "S_OUTPUT"){
+			if (tokens.size()>2){
+				argumento = tokens[1].get_str();
+				argumento2= tokens[3].get_str();
+
+				codigo += "push DWORD "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tcall EscreverString\n";
+				codigo += "\tadd esp,4\n";
+			}else {
+				argumento = tokens[1].get_str();
+				codigo += "push DWORD "+argumento+"\n";
+				codigo += "\tcall EscreverString\n";
+				codigo += "\tadd esp,4\n";
+			}
+		}
 		else if (instrucao == "STOP"){
 			codigo += "mov eax,1\n\tmov ebx,0\n\tint 80h\n";
 		}
