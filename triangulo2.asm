@@ -1,0 +1,18 @@
+TRIANGULO: EQU 1 ;isto é uma constante
+PRINT: EQU 1 ;isto é para mostrar ou não a saida
+SECTION TEXT
+INPUT		B
+INPUT		H
+LOAD		B
+MULT		H
+IF TRIANGULO
+DIV		DOIS
+STORE		R
+IF PRINT
+OUTPUT	R
+STOP
+SECTION DATA
+B:		SPACE
+H:		SPACE
+R:		SPACE
+DOIS:	CONST		2
