@@ -12,9 +12,6 @@ _start:
 	push H
 	call LerInteiro
 	add esp,4
-	push DWORD [H]
-	call EscreverInteiro
-	add esp,4
 	mov ebx, [B]
 	mov [G+1], ebx
 	push A+1*4

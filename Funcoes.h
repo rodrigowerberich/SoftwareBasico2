@@ -61,6 +61,7 @@ namespace Montador{
 	"\n\tpush ecx"
 	"\n\tpush edx"
 	"\n\tmov eax,[EBP+8]"
+	"\n\tmov edx,0"
 	"\n\tpush edx"
 	"\n\tmov ecx,10"
 "\nwhile:"

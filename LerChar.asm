@@ -16,14 +16,23 @@ _start:
 	call LerInteiro
 	add esp,4
 
+	push DWORD [inteiro]
+	call EscreverInteiro
+	add esp,4
+
 	push novo_int
 	call LerInteiro
 	add esp,4
 
+	push DWORD [novo_int]
+	call EscreverInteiro
+	add esp,4
+
 	mov eax, [novo_int]
 	add eax, [inteiro]
+	mov [novo_int2],eax
 
-	push eax
+	push dword [novo_int2]
 	call EscreverInteiro
 	add esp,4
 
@@ -74,6 +83,7 @@ EscreverInteiro:
 	push ecx
 	push edx
 	mov eax,[EBP+8]
+	mov edx, 0
 	push edx
 	mov ecx,10
 while:
