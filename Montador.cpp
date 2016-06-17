@@ -444,17 +444,17 @@ namespace Montador{
 		if(diretiva == "SPACE") {
 			if (tokens.size()>1) {
 				argumento = tokens[1].get_str();
-				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd ";
+				codigo += "\t"+tabela_simbolo.get_rotulo(num_linha)+" dd ";
 				for (int i = 0;i<atoi(argumento.c_str())-1;i++){
 					codigo += "0,";
 				}
 				codigo+="0\n";
 			}else 
-				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd 0\n";
+				codigo += "\t"+tabela_simbolo.get_rotulo(num_linha)+" dd 0\n";
 		}
 		else if(diretiva == "CONST") {
 			argumento = tokens[1].get_str();
-				codigo += tabela_simbolo.get_rotulo(num_linha)+" dd "+argumento+"\n";
+				codigo += "\t"+tabela_simbolo.get_rotulo(num_linha)+" dd "+argumento+"\n";
 		}
 	}
 
@@ -581,7 +581,7 @@ namespace Montador{
 					argumento = argumento.substr(0,argumento.size()-1);
 					argumento2= tokens[4].get_str();
 
-					codigo += "mov ebx, ["+argumento+"]\n";
+					codigo += "mov ebx, ["+argumento+"*4]\n";
 					codigo += "\tmov ["+argumento2+"], ebx\n";
 				}else if (tokens[2].get_str() != "+" && tokens[3].get_str() == "+"){
 
@@ -590,7 +590,7 @@ namespace Montador{
 					argumento2= tokens[2].get_str()+"+"+tokens[4].get_str();
 
 					codigo += "mov ebx, ["+argumento+"]\n";
-					codigo += "\tmov ["+argumento2+"], ebx\n";
+					codigo += "\tmov ["+argumento2+"*4], ebx\n";
 
 				}else if (tokens.size()> 6) {
 					if (tokens[2].get_str() == "+" && tokens[5].get_str() == "+"){
@@ -599,8 +599,8 @@ namespace Montador{
 						argumento = argumento.substr(0,argumento.size()-1);
 						argumento2= tokens[4].get_str()+"+"+tokens[6].get_str();
 
-						codigo += "mov ebx, ["+argumento+"]\n";
-						codigo += "\tmov ["+argumento2+"], ebx\n";
+						codigo += "mov ebx, ["+argumento+"*4]\n";
+						codigo += "\tmov ["+argumento2+"*4], ebx\n";
 					}
 				}
 				
