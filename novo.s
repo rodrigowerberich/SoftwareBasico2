@@ -1,36 +1,91 @@
 section .text
 global _start
 _start:
-	push H
-	call LerInteiro
+	push A
+	call LerString
 	add esp,4
-	mov ebx, [H]
-	mov [B], ebx
+	mov [B], eax
 	push DWORD [B]
 	call EscreverInteiro
 	add esp,4
 	push H
 	call LerInteiro
 	add esp,4
-	push DWORD [H]
+	mov eax, [H]
+	sub eax, [H]
+	mov [B], eax
+	push DWORD [B]
 	call EscreverInteiro
 	add esp,4
-	mov ebx, [B]
-	mov [G+1*4], ebx
-	push A+1*4
-	call LerString
+	mov [B], eax
+	push DWORD [B]
+	call EscreverInteiro
 	add esp,4
-	push DWORD A+2*4
+	push B
+	call LerInteiro
+	add esp,4
+	mov [B], eax
+	push DWORD [B]
+	call EscreverInteiro
+	add esp,4
+	cmp eax, 0
+	je ZERO
+VOLTA: 
+	add eax, [U]
+	mov [B], eax
+	push DWORD [B]
+	call EscreverInteiro
+	add esp,4
+	push DWORD [B]
+	call EscreverInteiro
+	add esp,4
+	push DWORD [B]
+	call EscreverInteiro
+	add esp,4
+	push DWORD A
 	call EscreverString
 	add esp,4
+	cmp eax, 0
+	jg UM
+V2: 
+	sub eax, [G]
+	mov [B], eax
+	push DWORD [B]
+	call EscreverInteiro
+	add esp,4
+	push DWORD A
+	call EscreverString
+	add esp,4
+	cmp eax, 0
+	jl DOIS
+ZERO: 
+	push DWORD [Z]
+	call EscreverInteiro
+	add esp,4
+	jmp VOLTA
+	jmp EXIT
+UM: 
+	push DWORD [U]
+	call EscreverInteiro
+	add esp,4
+	jmp V2
+	jmp EXIT
+DOIS: 
+	push DWORD [D]
+	call EscreverInteiro
+	add esp,4
+EXIT: 
 	mov eax,1
 	mov ebx,0
 	int 80h
 section .data
-	H dd 0,0,0
+	H dd 0,0,0,0
 	B dd 0
-	A dd 0,0,0,0,0,0,0,0,0,0
-	G dd 0X002
+	A dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	G dd 5
+	Z dd 0
+	U dd 1
+	D dd 2
 
 
 section .text
@@ -73,8 +128,10 @@ fim:
 EscreverInteiro:
 	enter 0,0
 	push eax
+	push ebx
 	push ecx
 	push edx
+	mov ebx,esp
 	mov eax,[EBP+8]
 	mov edx,0
 	push edx
@@ -89,8 +146,10 @@ while:
 	push esp
 	call EscreverString
 	add esp,4
+	mov esp,ebx
 	pop edx
 	pop ecx
+	pop ebx
 	pop eax
 	leave
 	ret
@@ -106,13 +165,14 @@ ler:
 	add ecx,ebx
 	push ecx
 	call LerChar
+	add esp,4
 	inc eax
 	cmp dword [ecx],0xa
 	jne ler
-	add esp,4
 	mov dword [ecx],0
 	pop ecx
 	pop ebx
+	dec eax
 	leave
 	ret
 EscreverString:
@@ -134,7 +194,7 @@ LerChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax, 3
 	mov ebx, 0
 	mov ecx, [EBP+8] 
@@ -151,7 +211,7 @@ EscreverChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax,4
 	mov ebx,1
 	mov ecx,[EBP+8]

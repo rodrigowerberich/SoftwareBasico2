@@ -1,38 +1,47 @@
 section .text
 global _start
 _start:
-	push OLD_DATA
+	push N
 	call LerInteiro
 	add esp,4
-	mov eax, [OLD_DATA]
-L1: 
+	mov ebx, [N]
+	mov [AUX], ebx
+	mov ebx, [ZERO]
+	mov [SUM], ebx
+LOOP: 
+	mov eax, [N]
+	cmp eax, 0
+	je OUT
 	mov edx,0
-	div DWORD [DOIS]
+	div DWORD [DEZ]
 	mov edx,0
-	mov [NEW_DATA], eax
 	mov edx,0
-	mul DWORD [DOIS]
+	mul DWORD [DEZ]
 	mov edx,0
-	mov [TMP_DATA], eax
-	mov eax, [OLD_DATA]
-	sub eax, [TMP_DATA]
-	mov [TMP_DATA], eax
-	push DWORD [TMP_DATA]
+	mov [AUX], eax
+	mov eax, [N]
+	sub eax, [AUX]
+	add eax, [SUM]
+	mov [SUM], eax
+	mov eax, [N]
+	mov edx,0
+	div DWORD [DEZ]
+	mov edx,0
+	mov [N], eax
+	jmp LOOP
+OUT: 
+	push DWORD [SUM]
 	call EscreverInteiro
 	add esp,4
-	mov ebx, [NEW_DATA]
-	mov [OLD_DATA], ebx
-	mov eax, [OLD_DATA]
-	cmp eax, 0
-	ja L1
 	mov eax,1
 	mov ebx,0
 	int 80h
 section .data
-	DOIS dd 2
-	OLD_DATA dd 0
-	NEW_DATA dd 0
-	TMP_DATA dd 0
+	ZERO dd 0X00
+	DEZ dd 0XA
+	SUM dd 0
+	AUX dd 0
+	N dd 0
 
 
 section .text

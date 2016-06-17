@@ -503,10 +503,12 @@ namespace Montador{
 
 				codigo += "mov edx,0\n";
 				codigo += "\tmul DWORD ["+argumento+"+"+argumento2+"*4]\n";
+				codigo += "\tmov edx,0\n";
 			}else {			
 				argumento = tokens[1].get_str();
 				codigo += "mov edx,0\n";
 				codigo += "\tmul DWORD ["+argumento+"]\n";
+				codigo += "\tmov edx,0\n";
 			}
 		}
 		else if (instrucao == "DIV"){
@@ -516,10 +518,12 @@ namespace Montador{
 
 				codigo += "mov edx,0\n";
 				codigo += "\tdiv DWORD ["+argumento+"+"+argumento2+"*4]\n";
+				codigo += "\tmov edx,0\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "mov edx,0\n";
 				codigo += "\tdiv DWORD ["+argumento+"]\n";
+				codigo += "\tmov edx,0\n";
 			}
 		}
 		else if (instrucao == "JMP"){
@@ -539,11 +543,11 @@ namespace Montador{
 				argumento2= tokens[3].get_str();
 
 				codigo += "cmp eax, 0\n";
-				codigo += "\tjb "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tjl "+argumento+"+"+argumento2+"*4\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "cmp eax, 0\n";
-				codigo += "\tjb "+argumento+"\n";
+				codigo += "\tjl "+argumento+"\n";
 			}
 		}
 		else if (instrucao == "JMPP"){
@@ -552,11 +556,11 @@ namespace Montador{
 				argumento2= tokens[3].get_str();
 
 				codigo += "cmp eax, 0\n";
-				codigo += "\tja "+argumento+"+"+argumento2+"*4\n";
+				codigo += "\tjg "+argumento+"+"+argumento2+"*4\n";
 			}else {
 				argumento = tokens[1].get_str();
 				codigo += "cmp eax, 0\n";
-				codigo += "\tja "+argumento+"\n";
+				codigo += "\tjg "+argumento+"\n";
 			}
 		}
 		else if (instrucao == "JMPZ"){

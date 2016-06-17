@@ -1,38 +1,27 @@
 section .text
 global _start
 _start:
-	push OLD_DATA
+ROT: 
+	push N1
 	call LerInteiro
 	add esp,4
-	mov eax, [OLD_DATA]
-L1: 
-	mov edx,0
-	div DWORD [DOIS]
-	mov edx,0
-	mov [NEW_DATA], eax
-	mov edx,0
-	mul DWORD [DOIS]
-	mov edx,0
-	mov [TMP_DATA], eax
-	mov eax, [OLD_DATA]
-	sub eax, [TMP_DATA]
-	mov [TMP_DATA], eax
-	push DWORD [TMP_DATA]
+	mov ebx, [N1]
+	mov [N4+1*4], ebx
+	mov ebx, [N2]
+	mov [N3], ebx
+	mov ebx, [N3]
+	mov [N4], ebx
+	push DWORD [N4]
 	call EscreverInteiro
 	add esp,4
-	mov ebx, [NEW_DATA]
-	mov [OLD_DATA], ebx
-	mov eax, [OLD_DATA]
-	cmp eax, 0
-	ja L1
 	mov eax,1
 	mov ebx,0
 	int 80h
 section .data
-	DOIS dd 2
-	OLD_DATA dd 0
-	NEW_DATA dd 0
-	TMP_DATA dd 0
+	N1 dd 0
+	N2 dd 5
+	N3 dd 0
+	N4 dd 0,0
 
 
 section .text
@@ -78,7 +67,6 @@ EscreverInteiro:
 	push ecx
 	push edx
 	mov eax,[EBP+8]
-	mov edx,0
 	push edx
 	mov ecx,10
 while:
