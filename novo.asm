@@ -3,7 +3,7 @@ input H
 copy H, B
 output B
 input H
-
+output H
 copy b, G + 1
 s_input A + 1
 s_output A + 2

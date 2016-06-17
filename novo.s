@@ -12,8 +12,11 @@ _start:
 	push H
 	call LerInteiro
 	add esp,4
+	push DWORD [H]
+	call EscreverInteiro
+	add esp,4
 	mov ebx, [B]
-	mov [G+1], ebx
+	mov [G+1*4], ebx
 	push A+1*4
 	call LerString
 	add esp,4
@@ -24,10 +27,10 @@ _start:
 	mov ebx,0
 	int 80h
 section .data
-H dd 0,0,0
-B dd 0
-A dd 0,0,0,0,0,0,0,0,0,0
-G dd 0X002
+	H dd 0,0,0
+	B dd 0
+	A dd 0,0,0,0,0,0,0,0,0,0
+	G dd 0X002
 
 
 section .text
@@ -73,6 +76,7 @@ EscreverInteiro:
 	push ecx
 	push edx
 	mov eax,[EBP+8]
+	mov edx,0
 	push edx
 	mov ecx,10
 while:

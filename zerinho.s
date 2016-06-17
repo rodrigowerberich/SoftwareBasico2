@@ -1,45 +1,89 @@
-section .data
-char dd 'a'
-nwl dd 0xd,0xa
-string dd 'u','m','a',' ','s','t','r','i','n','g',0xd,0xa,0
-inteiro dd 32
-section .bss
-novo_char resd 1
-nova_string resd 50
-novo_int resd 1
-novo_int2 resd 1
 section .text
 global _start
 _start:
-
-	push inteiro
+	push A
 	call LerInteiro
 	add esp,4
-
-	push DWORD [inteiro]
-	call EscreverInteiro
-	add esp,4
-
-	push novo_int
+	push B
 	call LerInteiro
 	add esp,4
-
-	push DWORD [novo_int]
+	push C
+	call LerInteiro
+	add esp,4
+	mov eax, [A]
+	sub eax, [B]
+	cmp eax, 0
+	je CHECK_B
+	mov eax, [A]
+	sub eax, [C]
+	cmp eax, 0
+	je CHECK_B
+	jmp A_WINS
+CHECK_B: 
+	mov eax, [ZERO]
+	mov eax, [B]
+	sub eax, [A]
+	cmp eax, 0
+	je CHECK_C
+	mov eax, [B]
+	sub eax, [C]
+	cmp eax, 0
+	je CHECK_C
+	jmp B_WINS
+CHECK_C: 
+	mov eax, [ZERO]
+	mov eax, [C]
+	sub eax, [A]
+	cmp eax, 0
+	je TIE
+	mov eax, [C]
+	sub eax, [B]
+	cmp eax, 0
+	je TIE
+	jmp C_WINS
+TIE: 
+	mov eax, [ZERO]
+	push DWORD [ZERO]
 	call EscreverInteiro
 	add esp,4
-
-	mov eax, [novo_int]
-	add eax, [inteiro]
-	mov [novo_int2],eax
-
-	push dword [novo_int2]
-	call EscreverInteiro
-	add esp,4
-
 	mov eax,1
 	mov ebx,0
 	int 80h
+A_WINS: 
+	mov eax, [ZERO]
+	push DWORD [ONE]
+	call EscreverInteiro
+	add esp,4
+	mov eax,1
+	mov ebx,0
+	int 80h
+B_WINS: 
+	mov eax, [ZERO]
+	push DWORD [TWO]
+	call EscreverInteiro
+	add esp,4
+	mov eax,1
+	mov ebx,0
+	int 80h
+C_WINS: 
+	mov eax, [ZERO]
+	push DWORD [THREE]
+	call EscreverInteiro
+	add esp,4
+	mov eax,1
+	mov ebx,0
+	int 80h
+section .data
+	A dd 0
+	B dd 0
+	C dd 0
+	ZERO dd 0
+	ONE dd 1
+	TWO dd 2
+	THREE dd 3
 
+
+section .text
 LerInteiro:
 	enter 5,0
 	push eax
@@ -76,16 +120,13 @@ fim:
 	pop eax
 	leave
 	ret
-
 EscreverInteiro:
 	enter 0,0
 	push eax
-	push ebx
 	push ecx
 	push edx
-	mov ebx,esp
 	mov eax,[EBP+8]
-	mov edx, 0
+	mov edx,0
 	push edx
 	mov ecx,10
 while:
@@ -98,14 +139,11 @@ while:
 	push esp
 	call EscreverString
 	add esp,4
-	mov esp,ebx
 	pop edx
 	pop ecx
-	pop ebx
 	pop eax
 	leave
 	ret
-
 LerString:
 	enter 0,0
 	push ebx
@@ -125,9 +163,8 @@ ler:
 	mov dword [ecx],0
 	pop ecx
 	pop ebx
-	leave	
+	leave
 	ret
-
 EscreverString:
 	enter 0,0
 	push eax
@@ -141,8 +178,7 @@ escreve:
 	jnz escreve
 	pop eax
 	leave
-	ret	
-
+	ret
 LerChar:
 	enter 0,0
 	push eax
@@ -160,7 +196,6 @@ LerChar:
 	pop eax
 	leave
 	ret
-
 EscreverChar:
 	enter 0,0
 	push eax
