@@ -314,8 +314,10 @@ fim:
 EscreverInteiro:
 	enter 0,0
 	push eax
+	push ebx
 	push ecx
 	push edx
+	mov ebx,esp
 	mov eax,[EBP+8]
 	mov edx,0
 	push edx
@@ -330,8 +332,10 @@ while:
 	push esp
 	call EscreverString
 	add esp,4
+	mov esp,ebx
 	pop edx
 	pop ecx
+	pop ebx
 	pop eax
 	leave
 	ret
@@ -347,13 +351,14 @@ ler:
 	add ecx,ebx
 	push ecx
 	call LerChar
+	add esp,4
 	inc eax
 	cmp dword [ecx],0xa
 	jne ler
-	add esp,4
 	mov dword [ecx],0
 	pop ecx
 	pop ebx
+	dec eax
 	leave
 	ret
 EscreverString:
@@ -375,7 +380,7 @@ LerChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax, 3
 	mov ebx, 0
 	mov ecx, [EBP+8] 
@@ -392,7 +397,7 @@ EscreverChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax,4
 	mov ebx,1
 	mov ecx,[EBP+8]

@@ -118,10 +118,10 @@ ler:
 	add ecx,ebx
 	push ecx
 	call LerChar
+	add esp,4
 	inc eax
 	cmp dword [ecx],0xa
 	jne ler
-	add esp,4
 	mov dword [ecx],0
 	pop ecx
 	pop ebx
@@ -148,7 +148,7 @@ LerChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax, 3
 	mov ebx, 0
 	mov ecx, [EBP+8] 
@@ -166,7 +166,7 @@ EscreverChar:
 	push eax
 	push ebx
 	push ecx
-	push ebx
+	push edx
 	mov eax,4
 	mov ebx,1
 	mov ecx,[EBP+8]
